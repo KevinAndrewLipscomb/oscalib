@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "oscalib", "oscalib.csproj",
 		{A20C347B-5154-47B9-A275-36157BF73352} = {A20C347B-5154-47B9-A275-36157BF73352}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ki", "..\foundation\dotnet\ki\ki.csproj", "{A20C347B-5154-47B9-A275-36157BF73352}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ki", "lib\ki\ki.csproj", "{A20C347B-5154-47B9-A275-36157BF73352}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
