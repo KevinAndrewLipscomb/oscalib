@@ -3,30 +3,55 @@ using System.Configuration;
 using System.Data;
 
 namespace Class_db
-{
-    public abstract class TClass_db
-    {
-        protected MySqlConnection connection = null;
-        //Constructor  Create()
-        public TClass_db() : base()
-        {
-            // TODO: Add any constructor code here
-            connection = new MySqlConnection();
-            connection.ConnectionString = ConfigurationManager.AppSettings["db_connection_string"];
-        }
-        protected void Close()
-        {
-            connection.Close();
-        }
+  {
 
-        protected void Open()
+  public abstract class TClass_db
+    {
+
+    protected MySqlConnection connection = null;
+
+    public TClass_db() : base()
+      {
+      connection = new MySqlConnection(connectionString:ConfigurationManager.AppSettings["db_connection_string"]);
+      }
+
+    protected void Close()
+      {
+      connection.Close();
+      }
+
+    protected static void ExecuteOneOffProcedureScriptWithTolerance
+      (
+      string procedure_name,
+      MySqlScript my_sql_script
+      )
+      {
+      var done = false;
+      while (!done)
         {
-            if (connection.State != ConnectionState.Open)
+        try
+          {
+          my_sql_script.Execute();
+          done = true;
+          }
+        catch (MySqlException the_exception)
+          {
+          if (the_exception.Message != "PROCEDURE " + procedure_name + " already exists")
             {
-                connection.Open();
+            throw;
             }
+          }
         }
+      }
+
+    protected void Open()
+      {
+      if (connection.State != ConnectionState.Open)
+        {
+        connection.Open();
+        }
+      }
 
     } // end TClass_db
 
-}
+  }
