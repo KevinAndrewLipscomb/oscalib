@@ -6,7 +6,7 @@ namespace Class_biz_publicity
 
   // **
   //
-  // When revising this class, consider making corresponding changes to oscalib.Class_biz_publicity.
+  // When revising this class, consider making corresponding changes to KvrsWebsite.Class_biz_publicity.
   //
   // **
 
@@ -29,6 +29,7 @@ namespace Class_biz_publicity
         .Replace(" (Volunteers to your stations!)",k.EMPTY)
         .Replace(" (disregard)",k.EMPTY)
         .Replace(" case active.",k.EMPTY)
+        .Replace(" SAFETY *UNKNOWN*.",k.EMPTY)
         ;
       //
       // Remove house numbers.
