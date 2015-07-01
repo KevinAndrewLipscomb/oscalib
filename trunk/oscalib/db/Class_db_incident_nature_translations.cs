@@ -25,7 +25,7 @@ namespace Class_db_incident_nature_translations
 
     public bool Bind(string partial_spec, object target)
       {
-      var concat_clause = "concat(IFNULL(foreign,'-'),'|',IFNULL(local,'-'))";
+      var concat_clause = "concat(IFNULL(`foreign`,'-'),'|',IFNULL(local,'-'))";
       Open();
       ((target) as ListControl).Items.Clear();
       var dr = new MySqlCommand
@@ -81,7 +81,7 @@ namespace Class_db_incident_nature_translations
       var dr = new MySqlCommand
         (
         "SELECT id"
-        + " , CONVERT(concat(IFNULL(foreign,'-'),'|',IFNULL(local,'-')) USING utf8) as spec"
+        + " , CONVERT(concat(IFNULL(`foreign`,'-'),'|',IFNULL(local,'-')) USING utf8) as spec"
         + " FROM incident_nature_translation"
         + " order by spec",
         connection
@@ -101,7 +101,7 @@ namespace Class_db_incident_nature_translations
       Open();
       try
         {
-        new MySqlCommand(db_trail.Saved("delete from incident_nature_translation where id = \"" + id + "\""), connection).ExecuteNonQuery();
+        new MySqlCommand(db_trail.Saved("delete from incident_nature_translation where id = '" + id + "'"), connection).ExecuteNonQuery();
         }
       catch(System.Exception e)
         {
@@ -150,7 +150,7 @@ namespace Class_db_incident_nature_translations
       )
       {
       var childless_field_assignments_clause = k.EMPTY
-      + "foreign = NULLIF('" + foreign + "','')"
+      + "`foreign` = NULLIF('" + foreign + "','')"
       + " , local = NULLIF('" + local + "','')"
       + k.EMPTY;
       db_trail.MimicTraditionalInsertOnDuplicateKeyUpdate
