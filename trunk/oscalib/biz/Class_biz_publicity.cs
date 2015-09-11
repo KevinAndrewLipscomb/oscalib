@@ -24,6 +24,7 @@ namespace Class_biz_publicity
       rendition_of_oscalert_log_content = rendition_of_oscalert_log_content
         .Replace("OSCALERT: ",k.EMPTY)
         .Replace(" http://goo.gl/lvMvXs",k.EMPTY)
+        .Replace(" http://fp2w.net",k.EMPTY)
         .Replace("Assgnmt=","Assgnmt: ")
         .Replace(" Volunteers to your stations.",k.EMPTY)
         .Replace(" (Volunteers to your stations!)",k.EMPTY)
