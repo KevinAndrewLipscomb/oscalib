@@ -88,7 +88,7 @@ namespace Class_db_trail
       new MySqlCommand
         (
         "insert into journal"
-        + " set timestamp = null"
+        + " set timestamp = CURRENT_TIMESTAMP"
         + " , actor = \"" + HttpContext.Current.User.Identity.Name + "\""
         + " , ip_address = \"" + HttpContext.Current.Request.UserHostAddress + "\""
         + " , action = \"" + Regex.Replace(action, Convert.ToString(k.QUOTE), k.DOUBLE_QUOTE) + "\"",
