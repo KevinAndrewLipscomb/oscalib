@@ -15,7 +15,7 @@ namespace Class_biz_incident_nature_translations
 
   public class TClass_biz_incident_nature_translations
     {
-    private TClass_db_incident_nature_translations db_incident_nature_translations = null;
+    private readonly TClass_db_incident_nature_translations db_incident_nature_translations = null;
 
     public TClass_biz_incident_nature_translations() : base()
       {
