@@ -106,7 +106,7 @@ namespace Class_db_trail
           (
           t:"/*" + DateTime.Now.ToString("yyyyMMddHHmmssfffffff") + k.SPACE + HttpContext.Current.Session["username"] + "*/ " + action,
           insert_string:k.NEW_LINE,
-          break_char_array:new char[] {},
+          break_char_array:Array.Empty<char>(),
           max_line_len:k.MAX_RFC_2822_ET_SEQ_EMAIL_LINE_LENGTH
           )
         );
