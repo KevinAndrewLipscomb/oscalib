@@ -1,4 +1,5 @@
 using MySql.Data.MySqlClient;
+using System;
 using System.Collections;
 using System.Configuration;
 using System.Data;
@@ -9,16 +10,22 @@ namespace Class_db
   public abstract class TClass_db
     {
 
-    protected MySqlConnection connection = null;
+    private MySqlConnection the_connection = null;
+
+    protected MySqlConnection connection
+      {
+      get => the_connection;
+      set => the_connection = value;
+      }
 
     public TClass_db() : base()
       {
-      connection = new MySqlConnection(connectionString:ConfigurationManager.AppSettings["db_connection_string"]);
+      the_connection = new MySqlConnection(connectionString:ConfigurationManager.AppSettings["db_connection_string"]);
       }
 
     protected void Close()
       {
-      connection.Close();
+      the_connection.Close();
       }
 
     protected void ExecuteOneOffProcedureScriptWithTolerance
@@ -37,7 +44,7 @@ namespace Class_db
           }
         catch (MySqlException the_exception)
           {
-          if (!new ArrayList() {"PROCEDURE " + procedure_name + " already exists","PROCEDURE " + connection.Database + "." + procedure_name + " does not exist"}.Contains(the_exception.Message))
+          if (!new ArrayList() {"PROCEDURE " + procedure_name + " already exists","PROCEDURE " + the_connection.Database + "." + procedure_name + " does not exist"}.Contains(the_exception.Message))
             {
             throw;
             }
@@ -47,9 +54,9 @@ namespace Class_db
 
     protected void Open()
       {
-      if (connection.State != ConnectionState.Open)
+      if (the_connection.State != ConnectionState.Open)
         {
-        connection.Open();
+        the_connection.Open();
         }
       }
 
