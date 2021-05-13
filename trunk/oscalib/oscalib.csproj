@@ -111,8 +111,10 @@
   <ItemGroup>
     <Compile Include="biz\Class_biz_incident_nature_translations.cs" />
     <Compile Include="biz\Class_biz_publicity.cs" />
+    <Compile Include="biz\Class_biz_radio_dispatches.cs" />
     <Compile Include="db\Class_db.cs" />
     <Compile Include="db\Class_db_incident_nature_translations.cs" />
+    <Compile Include="db\Class_db_radio_dispatches.cs" />
     <Compile Include="db\Class_db_trail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
