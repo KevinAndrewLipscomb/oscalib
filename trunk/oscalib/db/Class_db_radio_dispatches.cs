@@ -150,7 +150,8 @@ namespace Class_db_radio_dispatches
         +   " join incident_nature on (incident_nature.designator=radio_dispatch.nature)"
         + " where address = '" + address + "'"
         + " order by transmission_datetime desc"
-        + " limit 1",connection
+        + " limit 1",
+        connection
         );
       var description_obj = my_sql_command.ExecuteScalar();
       Close();
