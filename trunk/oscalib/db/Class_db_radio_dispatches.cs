@@ -239,6 +239,14 @@ namespace Class_db_radio_dispatches
       return the_summary;
       }
 
+    internal void Trim()
+      {
+      Open();
+      using var my_sql_command = new MySqlCommand("delete from radio_dispatch where transmission_datetime < (select min(time_initialized) from field_situation)",connection);
+      my_sql_command.ExecuteNonQuery();
+      Close();
+      }
+
     } // end TClass_db_radio_dispatches
 
   }
