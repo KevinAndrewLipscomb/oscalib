@@ -27,9 +27,8 @@ namespace Class_biz_publicity
         .Replace(" http://fp2w.net",k.EMPTY)
         .Replace("Assgnmt=","Assgnmt: ")
         .Replace(" Volunteers to your stations.",k.EMPTY)
-        .Replace(" (Volunteers to your stations!)",k.EMPTY)
-        .Replace(" (disregard)",k.EMPTY)
-        .Replace(" case active.",k.EMPTY)
+        .Replace(" Volunteers to your stations!",k.EMPTY)
+        .Replace("MCI!","MCI")
         .Replace(" SAFETY *UNKNOWN*.",k.EMPTY)
         ;
       //
