@@ -364,7 +364,7 @@ namespace Class_db_schedule_assignments
         +   " join shift on (shift.id=schedule_assignment.shift_id)"
         + " where nominal_day = CURDATE()"
         +   " and CURTIME() between SUBTIME(ADDTIME(start,muster_to_logon_timespan),'01:00:00') and ADDTIME(start,muster_to_logoff_timespan)"
-        +   " and post_id between 700 and 799 -- Special Event (SE) posts"
+        +   " and post_id between 700 and 799" // Special Event (SE) posts
         +   " and be_selected",
         connection
         );
