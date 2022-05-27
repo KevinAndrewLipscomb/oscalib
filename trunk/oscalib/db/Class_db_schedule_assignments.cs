@@ -617,7 +617,7 @@ namespace Class_db_schedule_assignments
       + " , member.agency_id as member_agency_id"
       + " , short_designator as agency_short_designator"
       + " , member_id"
-      + " , IF(LEFT(cad_num,1) BETWEEN 'A' and 'Z','o',watchbill_rendition) as medical_release_description"
+      + " , IF((LEFT(cad_num,1) BETWEEN 'A' and 'Z') and (medical_release_code = '1'),'o',watchbill_rendition) as medical_release_description" // o = Observer
       + " , concat(last_name,', ',first_name) as name"
       + " , IF(medical_release_code_description_map.pecking_order >= 20,IF(be_driver_qualified,'','Ð'),'') as be_driver_qualified"
       + " , be_selected"
@@ -1537,6 +1537,10 @@ namespace Class_db_schedule_assignments
         {
         filter += " and (enrollment_level.description in ('Field staff','College','Atypical','ResDoc','ALS Intern'" + (show_transferring_members ? ",'Transferring'" : k.EMPTY) + ")) and (condensed_schedule_assignment.member_id is null)";
         }
+      else if (compliancy_filter == "G") // Guest Providers
+        {
+        filter = " where enrollment_level.description = 'Guest Provider'";
+        }
       else if (compliancy_filter == "S") // field staff
         {
         filter += " and (enrollment_level.description in ('Field staff'))";
@@ -1555,7 +1559,11 @@ namespace Class_db_schedule_assignments
         + " , section_num"
         + " , IF(medical_release_code_description_map.pecking_order >= 20,'YES','no') as be_released"
         + " , medical_release_code_description_map.watchbill_rendition as level"
-        + " , ((condensed_schedule_assignment.member_id is not null) or IF(enrollment_level.description not in ('Field staff','College','Atypical','ALS Intern'" + (show_transferring_members ? ",'Transferring'" : k.EMPTY) + "),FALSE,NULL)) as be_compliant"
+        + " , ("
+        +     " (condensed_schedule_assignment.member_id is not null)"
+        +   " or"
+        +     " IF(enrollment_level.description not in ('Field staff','College','Atypical','ALS Intern','Guest Provider'" + (show_transferring_members ? ",'Transferring'" : k.EMPTY) + "),FALSE,NULL)"
+        +   " ) as be_compliant"
         + " , be_notification_pending"
         + " , member.email_address"
         + " , member.phone_num"
@@ -2046,7 +2054,7 @@ namespace Class_db_schedule_assignments
         +       " ,"
         +         " 0"
         +       " )"
-        +   " and enrollment_level.description not in ('Field staff','Observer')"
+        +   " and enrollment_level.description not in ('Field staff','Observer','Guest Provider')"
         + " )"
         + " UNION"
         //
