@@ -5,10 +5,9 @@ using Class_db_trail;
 using kix;
 using MySql.Data.MySqlClient;
 using System.Web.UI.WebControls;
-using System;
 
 namespace Class_db_incident_nature_translations
-  {
+{
   public class TClass_db_incident_nature_translations: TClass_db
     {
     private class incident_nature_translation_summary
