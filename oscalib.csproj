@@ -121,7 +121,7 @@
     <Analyzer Include="packages\Microsoft.CodeAnalysis.NetAnalyzers.5.0.3\analyzers\dotnet\cs\Microsoft.CodeAnalysis.NetAnalyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\foundation\dotnet\ki\ki.csproj">
+    <ProjectReference Include="..\ki\ki.csproj">
       <Project>{a20c347b-5154-47b9-a275-36157bf73352}</Project>
       <Name>ki</Name>
     </ProjectReference>
