@@ -2625,6 +2625,11 @@ namespace Class_db_schedule_assignments
       return (summary as schedule_assignment_summary).post_designator;
       }
 
+    public string PostIdOf(object summary)
+      {
+      return (summary as schedule_assignment_summary).post_id;
+      }
+
     public void Purge()
       {
       Open();
@@ -2680,9 +2685,19 @@ namespace Class_db_schedule_assignments
       return selected_and_notifiable_within_future_hours_id_q;
       }
 
+    public string MemberAgencyIdOf(object summary)
+      {
+      return (summary as schedule_assignment_summary).member_agency_id;
+      }
+
     public string MemberIdOf(object summary)
       {
       return (summary as schedule_assignment_summary).member_id;
+      }
+
+    public string MemberMedicalReleaseLevelOf(object summary)
+      {
+      return (summary as schedule_assignment_summary).member_medical_release_level;
       }
 
     public DateTime NominalDayOf(object summary)
