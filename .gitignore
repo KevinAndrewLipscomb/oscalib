@@ -2,4 +2,11 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/.vs/oscalib/v16
+/*.dll
+/*.dll.config
+/*.pdb
+/*.xml
+/.vs
+/lib
+/obj
+/packages
