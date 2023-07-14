@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/ingydotnet/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/KevinAndrewLipscomb/KiDotnetFoundation.git
+	branch = master
+	commit = 5c2ec8e1f063d4c023cacc864cf82f73fd9e3759
+	parent = 222743a1e3562acad96415228e5b5a3e905bac7e
+	method = merge
+	cmdver = 0.4.6
