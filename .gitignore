@@ -2,12 +2,13 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
+*.dll
+*.dll.config
+*.pdb
 *.SAV
-/*.dll
-/*.dll.config
-/*.pdb
+*.user
+obj/
+packages/
 /*.xml
 /.vs
-/lib
-/obj
-/packages
+/lib/ki/

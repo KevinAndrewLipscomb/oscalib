@@ -112,5 +112,8 @@
       <Name>ki</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="lib\000-README-RE-REQUIRED-ki-JUNCTION.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
