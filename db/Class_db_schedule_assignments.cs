@@ -3434,12 +3434,6 @@ namespace Class_db_schedule_assignments
             sql.Append(  $" and d{i.val + 1} = 'AVAILABLE'");
             sql.Append($" order by avail_sheet.timestamp desc");
             sql.Append($" on duplicate key update schedule_assignment.comment = IF(not schedule_assignment.be_selected and schedule_assignment.comment is null,@result_comment,schedule_assignment.comment)");
-              //
-              // The muster_to_~_timespan fields *must* be set in a second pass because at this point we don't know whether to base
-              // them on the corresponding comment from the avail_comment table or from the schedule_assignment table, and all we're
-              // doing here is *building* the sql, not executing it.  In the second pass the basis will definitely be the
-              // schedule_assignment table.
-              //
             sql.Append($";");
             sql.Append($" insert schedule_assignment (nominal_day,shift_id,post_id,member_id,be_selected,be_new,comment,muster_to_logon_timespan,muster_to_logoff_timespan)");
             sql.Append($" select str_to_date(concat('{month_yyyy_mm}-','{i.val + 1:d2}'),'%Y-%m-%d') as nominal_day");
@@ -3475,24 +3469,20 @@ namespace Class_db_schedule_assignments
             sql.Append(  $" and n{i.val + 1} = 'AVAILABLE'");
             sql.Append($" order by avail_sheet.timestamp desc");
             sql.Append($" on duplicate key update schedule_assignment.comment = IF(not schedule_assignment.be_selected and schedule_assignment.comment is null,@result_comment,schedule_assignment.comment)");
-              //
-              // The muster_to_~_timespan fields *must* be set in a second pass because at this point we don't know whether to base
-              // them on the corresponding comment from the avail_comment table or from the schedule_assignment table, and all we're
-              // doing here is *building* the sql, not executing it.  In the second pass the basis will definitely be the
-              // schedule_assignment table.
-              //
             sql.Append($";");
-              ;
             }
-          sql
-            .Append($" update schedule_assignment join shift on shift.id=schedule_assignment.shift_id")
-            .Append($" set muster_to_logon_timespan = {MusterToLogonTimespanCookedDay()}, muster_to_logoff_timespan = {MusterToLogoffTimespanCooked()}")
-            .Append($" where MONTH(nominal_day) = MONTH('{convenient_datetime:yyyy-MM-dd}') and pecking_order <= 20000")
-            .Append($";")
-            .Append($" update schedule_assignment join shift on shift.id=schedule_assignment.shift_id")
-            .Append($" set muster_to_logon_timespan = {MusterToLogonTimespanCookedNight()}, muster_to_logoff_timespan = {MusterToLogoffTimespanCooked()}")
-            .Append($" where MONTH(nominal_day) = MONTH('{convenient_datetime:yyyy-MM-dd}') and pecking_order > 20000")
-            ;
+          //
+          // The muster_to_~_timespan fields *must* be set in a second pass because prior to this point we don't know whether to
+          // base them on the corresponding comment from the avail_comment table or from the schedule_assignment table.  In the
+          // second pass the basis will definitely be the schedule_assignment table.
+          //
+          sql.Append($" update schedule_assignment join shift on shift.id=schedule_assignment.shift_id");
+          sql.Append($" set muster_to_logon_timespan = {MusterToLogonTimespanCookedDay()}, muster_to_logoff_timespan = {MusterToLogoffTimespanCooked()}");
+          sql.Append($" where MONTH(nominal_day) = MONTH('{convenient_datetime:yyyy-MM-dd}') and pecking_order <= 20000");
+          sql.Append($";");
+          sql.Append($" update schedule_assignment join shift on shift.id=schedule_assignment.shift_id");
+          sql.Append($" set muster_to_logon_timespan = {MusterToLogonTimespanCookedNight()}, muster_to_logoff_timespan = {MusterToLogoffTimespanCooked()}");
+          sql.Append($" where MONTH(nominal_day) = MONTH('{convenient_datetime:yyyy-MM-dd}') and pecking_order > 20000");
           log.WriteLine(DateTime.Now.ToString("s") + " db_schedule_assignments.Update: Transaction will load new availabilities from avail_sheet.");
           using var my_sql_command_1 = new MySqlCommand(Dispositioned(sql.ToString()),connection,transaction);
           my_sql_command_1.ExecuteNonQuery();
