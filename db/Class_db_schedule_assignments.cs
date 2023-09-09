@@ -107,7 +107,7 @@ namespace Class_db_schedule_assignments
       +   " and shift.name = '" + shift_name + "'"
       +     (agency_filter.Length > 0 ? " and ((agency_id = '" + agency_filter + "') or (post_id = '" + agency_filter + "') or (post_id in (select satellite_station_id from agency_satellite_station where agency_id = '" + agency_filter + "')))" : k.EMPTY)
       +     release_condition_clause
-      + " order by post_id"
+      + " order by presentation_order"
       + " , be_selected desc"
       + " , post_cardinality"
       + " , medical_release_code_description_map.pecking_order desc"
@@ -668,7 +668,7 @@ namespace Class_db_schedule_assignments
       var common_initial_from_where_clause = common_from_where_clause + release_condition_clause + depth_condition_clause;
       var common_order_by_clause = k.EMPTY
       + " order by nominal_day"
-      + " , post_id"
+      + " , presentation_order"
       + " , be_selected desc"
       + " , post_cardinality"
       + " , medical_release_code_description_map.pecking_order desc"
