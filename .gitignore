@@ -7,8 +7,10 @@
 *.pdb
 *.SAV
 *.user
+.vs/
+MigrationBackup/
 obj/
 packages/
 /*.xml
-/.vs
 /lib/ki/
+
