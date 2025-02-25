@@ -8,23 +8,16 @@ namespace Class_db
 
   public abstract class TClass_db
     {
-
-    private MySqlConnection the_connection = null;
-
-    protected MySqlConnection connection
-      {
-      get => the_connection;
-      set => the_connection = value;
-      }
+    protected MySqlConnection Connection { get; set; } = null;
 
     public TClass_db() : base()
       {
-      the_connection = new MySqlConnection(connectionString:ConfigurationManager.ConnectionStrings["db_connection_string"].ConnectionString);
+      Connection = new MySqlConnection(ConfigurationManager.ConnectionStrings["db_connection_string"].ConnectionString);
       }
 
     protected void Close()
       {
-      the_connection.Close();
+      Connection.Close();
       }
 
     protected void ExecuteOneOffProcedureScriptWithTolerance
@@ -43,7 +36,7 @@ namespace Class_db
           }
         catch (MySqlException the_exception)
           {
-          if (!new ArrayList() {"PROCEDURE " + procedure_name + " already exists","PROCEDURE " + the_connection.Database + "." + procedure_name + " does not exist"}.Contains(the_exception.Message))
+          if (!new ArrayList() {"PROCEDURE " + procedure_name + " already exists","PROCEDURE " + Connection.Database + "." + procedure_name + " does not exist"}.Contains(the_exception.Message))
             {
             throw;
             }
@@ -53,9 +46,10 @@ namespace Class_db
 
     protected void Open()
       {
-      if (the_connection.State != ConnectionState.Open)
+      if (Connection.State != ConnectionState.Open)
         {
-        the_connection.Open();
+        Connection.Open();
+        (new MySqlCommand("set session sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'",Connection)).ExecuteNonQuery();
         }
       }
 

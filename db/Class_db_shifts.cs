@@ -6,6 +6,7 @@ using kix;
 using MySql.Data.MySqlClient;
 using System;
 using System.Web.UI.WebControls;
+using System.Collections.Generic;
 
 namespace Class_db_shifts
   {
@@ -24,7 +25,7 @@ namespace Class_db_shifts
       using var my_sql_command = new MySqlCommand
         (
         "select IF(@t between start and end,1,0) from (select @t := '" + time_of_day.ToString("hh':'mm") + "') as init,shift where name = 'DAY'",
-        connection
+        Connection
         );
       var be_now_day_shift = "1" == my_sql_command.ExecuteScalar().ToString();
       Close();
@@ -43,7 +44,7 @@ namespace Class_db_shifts
         + " from shift"
         + " where " + concat_clause + " like '%" + partial_spec.ToUpper() + "%'"
         + " order by spec",
-        connection
+        Connection
         );
       var dr = my_sql_command.ExecuteReader();
       while (dr.Read())
@@ -65,7 +66,7 @@ namespace Class_db_shifts
         + " , CONVERT(concat(IFNULL(start,'-'),'|',IFNULL(end,'-'),'|',IFNULL(name,'-')) USING utf8) as spec"
         + " FROM shift"
         + " order by spec",
-        connection
+        Connection
         );
       var dr = my_sql_command.ExecuteReader();
       while (dr.Read())
@@ -76,23 +77,29 @@ namespace Class_db_shifts
       Close();
       }
 
-    public void BindDirectToListControlByPeckingOrder(object target)
+    public void BindDirectToListControlByPeckingOrder(object target, bool shiftNameAsValue = false, string[] ignoreShiftNames = null, bool shortTimeFormat = false)
       {
+      List<string> lstIgnoreShiftNames = new List<string>(ignoreShiftNames != null ? ignoreShiftNames : new string[] {});
+
       Open();
       ((target) as ListControl).Items.Clear();
       ((target) as ListControl).Items.Add(new ListItem("-- Shift --",k.EMPTY));
+      string valueColumnName = !shiftNameAsValue ? "id" : "name";
+      string minutes_sql = !shortTimeFormat ? "%i" : "";
       using var my_sql_command = new MySqlCommand
         (
-        "SELECT id"
-        + " , concat(name,' (',TIME_FORMAT(start,'%H%i'),'-',TIME_FORMAT(end,'%H%i'),')') as spec"
-        + " FROM shift"
-        + " order by pecking_order",
-        connection
+        @$"SELECT {valueColumnName}
+           , concat(name,' (',TIME_FORMAT(start,'%H{minutes_sql}'),'-',TIME_FORMAT(end,'%H{minutes_sql}'),')') as spec
+           FROM shift
+           order by pecking_order",
+        Connection
         );
       var dr = my_sql_command.ExecuteReader();
       while (dr.Read())
         {
-        ((target) as ListControl).Items.Add(new ListItem(dr["spec"].ToString(), dr["id"].ToString()));
+        string strShift = dr[valueColumnName].ToString();
+        if (lstIgnoreShiftNames.Contains(strShift)) continue;
+        ((target) as ListControl).Items.Add(new ListItem(dr["spec"].ToString(), strShift));
         }
       dr.Close();
       Close();
@@ -105,7 +112,7 @@ namespace Class_db_shifts
       Open();
       try
         {
-        using var my_sql_command = new MySqlCommand(db_trail.Saved("delete from shift where id = \"" + id + "\""), connection);
+        using var my_sql_command = new MySqlCommand(db_trail.Saved("delete from shift where id = \"" + id + "\""), Connection);
         my_sql_command.ExecuteNonQuery();
         }
       catch(System.Exception e)
@@ -126,7 +133,7 @@ namespace Class_db_shifts
     public string EndHHofName(string name)
       {
       Open();
-      using var my_sql_command = new MySqlCommand("select TIME_FORMAT(end,'%H') from shift where name = '" + name + "'",connection);
+      using var my_sql_command = new MySqlCommand("select TIME_FORMAT(end,'%H') from shift where name = '" + name + "'",Connection);
       var end_hh_of_name = my_sql_command.ExecuteScalar().ToString();
       Close();
       return end_hh_of_name;
@@ -151,7 +158,7 @@ namespace Class_db_shifts
       result = false;
       //
       Open();
-      using var my_sql_command = new MySqlCommand("select * from shift where CAST(id AS CHAR) = \"" + id + "\"", connection);
+      using var my_sql_command = new MySqlCommand("select * from shift where CAST(id AS CHAR) = \"" + id + "\"", Connection);
       dr = my_sql_command.ExecuteReader();
       if (dr.Read())
         {
@@ -169,7 +176,7 @@ namespace Class_db_shifts
     public string IdOfName(string name)
       {
       Open();
-      using var my_sql_command = new MySqlCommand("select id from shift where name = '" + name + "'",connection);
+      using var my_sql_command = new MySqlCommand("select id from shift where name = '" + name + "'",Connection);
       var id_obj = my_sql_command.ExecuteScalar();
       Close();
       return (id_obj == null ? k.EMPTY : id_obj.ToString());
@@ -178,7 +185,7 @@ namespace Class_db_shifts
     public string NameOf(string id)
       {
       Open();
-      using var my_sql_command = new MySqlCommand("select name from shift where id = '" + id + "'",connection);
+      using var my_sql_command = new MySqlCommand("select name from shift where id = '" + id + "'",Connection);
       var name_of = my_sql_command.ExecuteScalar().ToString();
       Close();
       return name_of;
@@ -210,7 +217,7 @@ namespace Class_db_shifts
           + " on duplicate key update "
           + childless_field_assignments_clause
           ),
-          connection
+          Connection
           );
       my_sql_command.ExecuteNonQuery();
       Close();
@@ -219,7 +226,7 @@ namespace Class_db_shifts
     public string StartHHofName(string name)
       {
       Open();
-      using var my_sql_command = new MySqlCommand("select TIME_FORMAT(start,'%H') from shift where name = '" + name + "'",connection);
+      using var my_sql_command = new MySqlCommand("select TIME_FORMAT(start,'%H') from shift where name = '" + name + "'",Connection);
       var start_hh_of_name = my_sql_command.ExecuteScalar().ToString();
       Close();
       return start_hh_of_name;

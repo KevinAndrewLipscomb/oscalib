@@ -1,1 +1,0 @@
-You need to drop a junction named "ki" to the folder that contains the KiDotnetFoundation project file (ki.csproj).

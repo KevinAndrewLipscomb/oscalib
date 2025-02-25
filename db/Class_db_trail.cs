@@ -50,8 +50,9 @@ namespace Class_db_trail
       {
       const string DELIMITER = "~";
       var procedure_name = "MTIODKU_" + ConfigurationManager.AppSettings["application_name"] + "_" + DateTime.Now.Ticks.ToString("D19");
+      var drop_procedure_clause = " drop procedure if exists " + procedure_name;
       var code = "/* DELIMITER '" + DELIMITER + "' */"
-      + " drop procedure if exists " + procedure_name
+      + drop_procedure_clause
       + DELIMITER
       + " create procedure " + procedure_name + "() modifies sql data"
       +   " BEGIN"
@@ -67,13 +68,24 @@ namespace Class_db_trail
       + DELIMITER
       + " call " + procedure_name + "()"
       + DELIMITER
-      + " drop procedure if exists " + procedure_name;
-      var my_sql_script = new MySqlScript();
-      my_sql_script.Connection = connection;
-      my_sql_script.Delimiter = DELIMITER;
-      my_sql_script.Query = Saved(code);
+      + drop_procedure_clause;
+      var my_sql_script = new MySqlScript
+        {
+        Connection = Connection,
+        Delimiter = DELIMITER,
+        Query = Saved(code)
+        };
       Open();
-      ExecuteOneOffProcedureScriptWithTolerance(procedure_name,my_sql_script);
+      try
+        {
+        ExecuteOneOffProcedureScriptWithTolerance(procedure_name,my_sql_script);
+        }
+      catch (Exception e)
+        {
+        using var my_sql_command = new MySqlCommand(drop_procedure_clause,Connection);
+        my_sql_command.ExecuteNonQuery();
+        throw e;
+        }
       Close();
       }
     public void MimicTraditionalInsertOnDuplicateKeyUpdate(string target_table_name,string key_field_name,string key_field_value,string childless_field_assignments_clause)
@@ -92,7 +104,7 @@ namespace Class_db_trail
         + " , actor = \"" + HttpContext.Current.User.Identity.Name + "\""
         + " , ip_address = \"" + HttpContext.Current.Request.UserHostAddress + "\""
         + " , action = \"" + Regex.Replace(action, Convert.ToString(k.QUOTE), k.DOUBLE_QUOTE) + "\"",
-        connection
+        Connection
         );
       my_sql_command.ExecuteNonQuery();
       Close();
