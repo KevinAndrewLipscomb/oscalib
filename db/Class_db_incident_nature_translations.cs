@@ -34,7 +34,7 @@ namespace Class_db_incident_nature_translations
         + " from incident_nature_translation"
         + " where " + concat_clause + " like '%" + partial_spec.ToUpper() + "%'"
         + " order by spec",
-        connection
+        Connection
         );
       var dr = my_sql_command.ExecuteReader();
       while (dr.Read())
@@ -49,7 +49,7 @@ namespace Class_db_incident_nature_translations
     internal string LocalOfForeign(string nature)
       {
       Open();
-      using var my_sql_command = new MySqlCommand("select local from incident_nature_translation where `foreign` = '" + nature + "'",connection);
+      using var my_sql_command = new MySqlCommand("select local from incident_nature_translation where `foreign` = '" + nature + "'",Connection);
       var local_of_foreign_obj = my_sql_command.ExecuteScalar();
       Close();
       return (local_of_foreign_obj == null ? k.EMPTY : local_of_foreign_obj.ToString());
@@ -71,7 +71,7 @@ namespace Class_db_incident_nature_translations
         (
         "select incident_nature_translation.id as id"
         + " from incident_nature_translation",
-        connection
+        Connection
         );
       ((target) as BaseDataList).DataSource = my_sql_command.ExecuteReader();
       ((target) as BaseDataList).DataBind();
@@ -88,7 +88,7 @@ namespace Class_db_incident_nature_translations
         + " , CONVERT(concat(IFNULL(`foreign`,'-'),'|',IFNULL(local,'-')) USING utf8) as spec"
         + " FROM incident_nature_translation"
         + " order by spec",
-        connection
+        Connection
         );
       var dr = my_sql_command.ExecuteReader();
       while (dr.Read())
@@ -105,7 +105,7 @@ namespace Class_db_incident_nature_translations
       Open();
       try
         {
-        using var my_sql_command = new MySqlCommand(db_trail.Saved("delete from incident_nature_translation where id = '" + id + "'"), connection);
+        using var my_sql_command = new MySqlCommand(db_trail.Saved("delete from incident_nature_translation where id = '" + id + "'"), Connection);
         my_sql_command.ExecuteNonQuery();
         }
       catch(System.Exception e)
@@ -135,7 +135,7 @@ namespace Class_db_incident_nature_translations
       var result = false;
       //
       Open();
-      using var my_sql_command = new MySqlCommand("select * from incident_nature_translation where CAST(id AS CHAR) = \"" + id + "\"", connection);
+      using var my_sql_command = new MySqlCommand("select * from incident_nature_translation where CAST(id AS CHAR) = \"" + id + "\"", Connection);
       var dr = my_sql_command.ExecuteReader();
       if (dr.Read())
         {
@@ -176,7 +176,7 @@ namespace Class_db_incident_nature_translations
         "SELECT *"
         + " FROM incident_nature_translation"
         + " where id = '" + id + "'",
-        connection
+        Connection
         );
       var dr = my_sql_command.ExecuteReader();
       dr.Read();

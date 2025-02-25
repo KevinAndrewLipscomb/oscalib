@@ -33,7 +33,7 @@ namespace Class_db_radio_dispatches
         + " from radio_dispatch"
         + " where " + concat_clause + " like '%" + partial_spec.ToUpper() + "%'"
         + " order by spec",
-        connection
+        Connection
         );
       var dr = my_sql_command.ExecuteReader();
       while (dr.Read())
@@ -58,7 +58,7 @@ namespace Class_db_radio_dispatches
         "select radio_dispatch.id as id"
         + " from radio_dispatch"
         + " order by " + sort_order.Replace("%",(be_sort_order_ascending ? "asc" : "desc")),
-        connection
+        Connection
         );
       ((target) as BaseDataList).DataSource = my_sql_command.ExecuteReader();
       ((target) as BaseDataList).DataBind();
@@ -75,7 +75,7 @@ namespace Class_db_radio_dispatches
         + " , CONVERT(concat(IFNULL(capcode,'-'),'|',IFNULL(transmission_datetime,'-'),'|',IFNULL(address,'-'),'|',IFNULL(nature,'-')) USING utf8) as spec"
         + " FROM radio_dispatch"
         + " order by spec",
-        connection
+        Connection
         );
       var dr = my_sql_command.ExecuteReader();
       while (dr.Read())
@@ -92,7 +92,7 @@ namespace Class_db_radio_dispatches
       Open();
       try
         {
-        using var my_sql_command = new MySqlCommand("delete from radio_dispatch where id = '" + id + "'", connection);
+        using var my_sql_command = new MySqlCommand("delete from radio_dispatch where id = '" + id + "'", Connection);
         my_sql_command.ExecuteNonQuery();
         }
       catch(System.Exception e)
@@ -126,7 +126,7 @@ namespace Class_db_radio_dispatches
       var result = false;
       //
       Open();
-      using var my_sql_command = new MySqlCommand("select * from radio_dispatch where CAST(id AS CHAR) = \"" + id + "\"", connection);
+      using var my_sql_command = new MySqlCommand("select * from radio_dispatch where CAST(id AS CHAR) = \"" + id + "\"", Connection);
       var dr = my_sql_command.ExecuteReader();
       if (dr.Read())
         {
@@ -151,7 +151,7 @@ namespace Class_db_radio_dispatches
         + " where address = '" + address + "'"
         + " order by transmission_datetime desc"
         + " limit 1",
-        connection
+        Connection
         );
       var description_obj = my_sql_command.ExecuteScalar();
       Close();
@@ -183,8 +183,9 @@ namespace Class_db_radio_dispatches
       //
       const string DELIMITER = "~";
       var procedure_name = "MTIODKU_" + ConfigurationManager.AppSettings["application_name"] + "_" + DateTime.Now.Ticks.ToString("D19");
+      var drop_procedure_clause = " drop procedure if exists " + procedure_name;
       var code = "/* DELIMITER '" + DELIMITER + "' */"
-      + " drop procedure if exists " + procedure_name
+      + drop_procedure_clause
       + DELIMITER
       + " create procedure " + procedure_name + "() modifies sql data"
       +   " BEGIN"
@@ -200,22 +201,33 @@ namespace Class_db_radio_dispatches
       + DELIMITER
       + " call " + procedure_name + "()"
       + DELIMITER
-      + " drop procedure if exists " + procedure_name;
-      var my_sql_script = new MySqlScript();
-      my_sql_script.Connection = connection;
-      my_sql_script.Delimiter = DELIMITER;
-      my_sql_script.Query = code;
+      + drop_procedure_clause;
+      var my_sql_script = new MySqlScript
+        {
+        Connection = Connection,
+        Delimiter = DELIMITER,
+        Query = code
+        };
       Open();
-      ExecuteOneOffProcedureScriptWithTolerance(procedure_name,my_sql_script);
+      try
+        {
+        ExecuteOneOffProcedureScriptWithTolerance(procedure_name,my_sql_script);
+        }
+      catch (Exception e)
+        {
+        using var my_sql_command = new MySqlCommand(drop_procedure_clause,Connection);
+        my_sql_command.ExecuteNonQuery();
+        throw e;
+        }
       //
-      using var my_sql_command = new MySqlCommand
+      using var my_sql_command_2 = new MySqlCommand
         (
         "update field_situation"
         + " set nature = IFNULL((select description from incident_nature where designator = '" + nature + "'),'" + nature + "')"
         + " where address = 'address'",
-        connection
+        Connection
         );
-      my_sql_command.ExecuteNonQuery();
+      my_sql_command_2.ExecuteNonQuery();
       Close();
       }
 
@@ -227,7 +239,7 @@ namespace Class_db_radio_dispatches
         "SELECT *"
         + " FROM radio_dispatch"
         + " where id = '" + id + "'",
-        connection
+        Connection
         );
       var dr = my_sql_command.ExecuteReader();
       dr.Read();
@@ -242,7 +254,7 @@ namespace Class_db_radio_dispatches
     internal void Trim()
       {
       Open();
-      using var my_sql_command = new MySqlCommand("delete from radio_dispatch where transmission_datetime < (select min(time_initialized) from field_situation)",connection);
+      using var my_sql_command = new MySqlCommand("delete from radio_dispatch where transmission_datetime < (select min(time_initialized) from field_situation)",Connection);
       my_sql_command.ExecuteNonQuery();
       Close();
       }
